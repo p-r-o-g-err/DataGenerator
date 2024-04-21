@@ -24,3 +24,20 @@
     color: #333;
     line-height: 1.2;
 }
+
+.uploadingDataDivEnabled {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer
+}
+
+.uploadingDataDivDisabled {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    cursor: not-allowed;
+    background-color: #f1f1f1;
+}

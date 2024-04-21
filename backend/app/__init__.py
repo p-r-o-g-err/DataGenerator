@@ -11,11 +11,12 @@ def create_app():
     db.init_app(app)
 
     from app.api import (
-        test, auth
+        test, auth, generator
     )
 
     app.register_blueprint(test.bp)
     app.register_blueprint(auth.bp)
-
+    app.register_blueprint(generator.bp)
+    
     return app
 

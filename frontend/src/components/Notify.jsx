@@ -17,9 +17,9 @@ function Notify({ message, type }) {
 
         return () => clearTimeout(timer);
     }, [notification, dispatch]);
-    
+
     return (
-        <ToastContainer className="p-3" style={{ zIndex: 1 }} position='top-end'>
+        <ToastContainer className="p-3" style={{ zIndex: 9999 }} position='top-end'>
             <Toast onClose={() => dispatch(clearNotification())} >
                 <Toast.Header style={{backgroundColor: variant}}>
                     <strong className="me-auto">Уведомление</strong>

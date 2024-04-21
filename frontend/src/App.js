@@ -36,7 +36,7 @@ function App() {
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    dispatch(setUserData({ firstName: data.first_name, lastName: data.last_name }));
+                    dispatch(setUserData({ userId: data.user_id, firstName: data.first_name, lastName: data.last_name }));
                 } else {
                     localStorage.removeItem('yandexAccessToken');
                 }

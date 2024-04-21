@@ -15,18 +15,19 @@ function Auth() {
     const userData = useSelector(state => state.userData);
 
     const loginSuccess = async (userData) => {
+        // await new Promise(resolve => setTimeout(resolve, 2000));
         let accessToken = userData.access_token;
         try {
-            console.log('Вызов fetch');
+            // console.log('Вызов fetch');
             const response = await fetch(`${apiUrl}/auth/yandex`, {
                 headers: {'Authorization': `Bearer ${accessToken}`}
             });
             const data = await response.json();
-            console.log('Данные с сервера', data);
+            // console.log('Данные с сервера', data);
 
             if (response.ok) {
                 localStorage.setItem('yandexAccessToken', accessToken);
-                dispatch(setUserData({ firstName: data.first_name, lastName: data.last_name }));
+                dispatch(setUserData({ userId: data.user_id, firstName: data.first_name, lastName: data.last_name }));
                 // dispatch(showNotification('Вы успешно авторизованы!', 'success'));
             } else {
                 loginFailure();
