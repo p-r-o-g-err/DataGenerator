@@ -1,0 +1,26 @@
+.imgButton {
+    margin-left: 10px;
+    height: 20px;
+    width: 20px;
+}
+
+.homeTitle {
+    font-family: Arial, sans-serif;
+    font-size: 2em;
+    color: #333;
+    line-height: 1.2;
+}
+
+.homeSubtitle {
+    font-family: Arial, sans-serif;
+    font-size: 1.2em;
+    color: #666;
+    line-height: 1.5;
+}
+
+.homeAlgorithmTitle {
+    font-family: Arial, sans-serif;
+    font-size: 1.5em;
+    color: #333;
+    line-height: 1.2;
+}
