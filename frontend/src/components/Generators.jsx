@@ -16,21 +16,22 @@ const Generators = () => {
 
     const createGenerator = (name, originalDataset) => {
         console.log('Данные для создания генератора', userData.userId, name, originalDataset);
-
-        // const data = new FormData();
-        // data.append('file', acceptedFiles[0]);
-
-        // fetch(`${apiUrl}/get_data`, {
-        //     method: 'POST',
-        //     body: data,
-        // })
-        // .then(response => response.json())
-        // .then(data => {
-        //     console.log(data);
-        // })
-        // .catch((error) => {
-        //     console.error('Error:', error);
-        // });
+        
+        const data = new FormData();
+        data.append('originalDataset', originalDataset);
+        data.append('userId', userData.userId);
+        data.append('name', name);
+        fetch(`${apiUrl}/generator/new`, {
+            method: 'POST',
+            body: data
+        })
+        .then(response => response) // .json()
+        .then(data => {
+            console.log(data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
     }
 
     return (

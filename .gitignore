@@ -21,3 +21,5 @@ yarn-error.log*
 
 backend/venv
 __pycache__
+
+backend/generators

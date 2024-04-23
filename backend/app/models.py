@@ -63,9 +63,12 @@ class Generator(db.Model):
         nullable=False
     )
     name: Mapped[str] = mapped_column(String(100), nullable=False)
-    original_dataset: Mapped[bytes] = mapped_column(BYTEA)
-    original_metadata: Mapped[dict] = mapped_column(JSONB)
-    parameters: Mapped[dict] = mapped_column(JSONB)
+    table_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    dataset_location: Mapped[str] = mapped_column(String(1000))
+    #dataset_metadata: Mapped[dict] = mapped_column(JSONB) # 
+    dataset_metadata = Column(JSONB)
+    model_config = Column(JSONB)
+    #model_config: Mapped[dict] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True),
         nullable=False,
@@ -79,27 +82,31 @@ class Generator(db.Model):
     )
     user = relationship('User', backref='generators')
 
-    def __init__(self, user_id, name, original_dataset, original_metadata, parameters):
+    def __init__(self, user_id, name, table_name, dataset_location, dataset_metadata, model_config):
         self.user_id = user_id
         self.name = name
-        self.original_dataset = original_dataset
-        self.original_metadata = original_metadata
-        self.parameters = parameters
+        self.table_name = table_name
+        self.dataset_location = dataset_location
+        self.dataset_metadata = dataset_metadata
+        self.model_config = model_config
 
     @staticmethod
-    def add_generator(user_id, name, original_dataset, original_metadata, parameters):
+    def add_generator(user_id, name, table_name, dataset_location = None, dataset_metadata = {}, model_config = {}):
         new_generator = Generator(
             user_id=user_id,
             name=name,
-            original_dataset=original_dataset,
-            original_metadata=original_metadata,
-            parameters=parameters
+            table_name=table_name,
+            dataset_location=dataset_location,
+            dataset_metadata=dataset_metadata,
+            model_config=model_config
         )
         db.session.add(new_generator)
         try:
             db.session.commit()
+            return new_generator
         except Exception as e:
             print("Ошибка при коммите сессии: ", e)
+            print("Подробности об ошибке: ", e.__traceback__)
 
     # created_at: Mapped[datetime] = mapped_column(default=db.func.current_timestamp())
     # updated_at: Mapped[datetime] = mapped_column(default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())

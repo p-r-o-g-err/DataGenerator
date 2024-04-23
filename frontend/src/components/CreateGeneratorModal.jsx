@@ -7,15 +7,13 @@ import { showNotification } from '../store/actions';
 
 function CreateGeneratorModal({handleClose, show, createGenerator}) {
     const [originalDataset, setOriginalDataset] = useState(null);
-    const [name, setName] = useState("");
-    const [fileName, setFileName] = useState("");
+    const [name, setName] = useState("")
     const dispatch = useDispatch();
 
     useEffect(() => {
         if (!show) {
             setOriginalDataset(null);
             setName("");
-            setFileName("");
         }
     }, [show]);
 
@@ -27,12 +25,16 @@ function CreateGeneratorModal({handleClose, show, createGenerator}) {
             dispatch(showNotification('Поддерживаются файлы только в формате CSV', 'error'));
             return;
         }
-        const data = new FormData();
-        data.append('file', acceptedFiles[0]);
-        console.log('data', data);
-        setOriginalDataset(data);
+        
+        const MAX_FILE_SIZE = 10 * 1024 * 1024;
+        if (acceptedFiles[0].size > MAX_FILE_SIZE) {
+            dispatch(showNotification(`Файл слишком большой! Максимальный размер файла: ${MAX_FILE_SIZE / (1024 * 1024)} MБ`, 'error'));
+            return;
+        }
+        
+        // console.log('data', data);
+        setOriginalDataset(acceptedFiles[0]);
         setName(nameFile);
-        setFileName(acceptedFiles[0].name);
     }
 
     const handleContinue = () => {
@@ -48,8 +50,8 @@ function CreateGeneratorModal({handleClose, show, createGenerator}) {
             dispatch(showNotification('Название генератора не должно превышать 100 символов', 'error'));
             return;
         }
-        if (!/^[a-zA-Zа-яА-Я0-9 ]+$/.test(name)) {
-            dispatch(showNotification('Название генератора должно содержать только буквы, цифры и пробелы, и не начинаться с пробела', 'error'));
+        if (!/^[a-zA-Zа-яА-Я0-9 -]+$/.test(name)) {
+            dispatch(showNotification('Название генератора должно содержать только буквы, цифры, пробелы, тире, и не начинаться с пробела', 'error'));
             return;
         }
         createGenerator(name.trim(), originalDataset);
@@ -81,10 +83,10 @@ function CreateGeneratorModal({handleClose, show, createGenerator}) {
                                 >
                                     <input {...getInputProps()} accept=".csv"/>
                                     { originalDataset ?
-                                        <p className='mb-0'>Загружен файл {fileName}</p> :
+                                        <p className='mb-0'>Загружен файл {originalDataset.name}</p> :
                                         <div className='mb-0'>
                                             <p>Перетащите файл сюда или кликните для выбора файла</p>
-                                            <p>Поддерживаются файлы в формате CSV</p>
+                                            <p>Поддерживаются файлы в формате CSV размером не более 10 МБ</p>
                                         </div>
                                     }
                                 </div>
