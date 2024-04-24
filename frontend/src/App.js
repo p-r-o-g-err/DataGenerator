@@ -11,11 +11,12 @@ import Notify from './components/Notify';
 
 import Home from './components/Home';
 import Generators from './components/Generators';
+import DataConfig from './components/DataConfig';
 import withAuthCheck from './components/withAuthCheck';
 
 // Защита компонентов от неавторизованных пользователей
 const ProtectedGenerators = withAuthCheck(Generators);
-
+const ProtectedDataConfig = withAuthCheck(DataConfig);
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -63,6 +64,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/generators" element={<ProtectedGenerators />} />
+                <Route path="/generators/:id/data-config" element={<ProtectedDataConfig />} />
             </Routes>
         </BrowserRouter>
     );

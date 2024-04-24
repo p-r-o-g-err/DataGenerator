@@ -14,6 +14,14 @@ export const clearNotification = () => ({
     type: actions.CLEAR_NOTIFICATION
 });
 
+export const setGenerators = generators => ({
+    type: actions.SET_GENERATORS,
+    payload: generators
+});
+
+export const clearGenerators = () => ({
+    type: actions.CLEAR_GENERATORS
+});
 // export const addTask = task => ({
 //   type: actions.TASK_ADD,
 //   payload: task

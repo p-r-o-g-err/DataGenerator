@@ -1,12 +1,20 @@
 from sdv.metadata import SingleTableMetadata
 from sdv.single_table import GaussianCopulaSynthesizer
 import pandas as pd
+import chardet
+
+def read_csv(file_path):
+    with open(file_path, 'rb') as f:
+        result = chardet.detect(f.read())
+    print('Кодировка файла:', result['encoding'])
+    data = pd.read_csv(file_path, encoding=result['encoding'])
+    return data
 
 def get_metadata(dataset_location):
+    data = read_csv(dataset_location)
     metadata = SingleTableMetadata()
-    metadata.detect_from_csv(filepath=dataset_location)
+    metadata.detect_from_dataframe(data)
     # Предобработка метаданных
-    data = pd.read_csv(dataset_location)
     metadata = replace_types(metadata, data)
     metadata = split_numerical(metadata, data)
     metadata = remove_pii(metadata)

@@ -2,7 +2,8 @@ import * as actions from './actionTypes';
 
 const initialState = {
   userData: null,
-  notification: null
+  notification: null,
+  generators: null
 };
 
 export default function reducer(state = initialState, action) {
@@ -21,6 +22,16 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         notification: null
+      };
+    case actions.SET_GENERATORS:
+      return {
+        ...state,
+        generators: action.payload
+      };
+    case actions.CLEAR_GENERATORS:
+      return {
+        ...state,
+        generators: null
       };
     // case actions.TASK_ADD:
     //   return [...state, {

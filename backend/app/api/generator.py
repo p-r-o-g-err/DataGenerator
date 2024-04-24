@@ -4,6 +4,7 @@ from app.models import Generator, db
 from werkzeug.utils import secure_filename
 import os
 from app.services import generator_service
+from app.utils import transform_metadata, transform_metadata_back
 
 bp = Blueprint("generator", __name__)
 
@@ -36,10 +37,70 @@ def create_generator():
     # Обновляем dataset_metadata в базе данных
     new_generator.dataset_metadata = dataset_metadata
     db.session.commit()
+
+    #dataset_metadata_array = [{"name": name, **details} for name, details in dataset_metadata['columns'].items()]
+    #print('dataset_metadata_array', dataset_metadata_array)
     print('Данные генератора', generator_id, user_id, name, table_name, dataset_location, dataset_metadata) 
+    # print(new_)
+    return jsonify({
+        'generator_id': generator_id,
+        'name': name,
+        'table_name': table_name,
+        'dataset_metadata': transform_metadata(dataset_metadata),
+        'model_config': new_generator.model_config,
+        'created_at': new_generator.created_at
+    }), 201
     
-    return jsonify({'message': 'Генератор успешно создан'}), 201
-    
+@bp.route('/generator/all', methods=['Get'])
+def get_all_generators():
+    generators = Generator.query.all()
+    return jsonify([{
+        'generator_id': generator.generator_id,
+        'name': generator.name,
+        'table_name': generator.table_name,
+        'dataset_metadata': transform_metadata(generator.dataset_metadata),
+        'model_config': generator.model_config,
+        'created_at': generator.created_at
+    } for generator in generators]), 200
+
+@bp.route('/generator/<generator_id>', methods=['Get'])
+def get_generator(generator_id):
+    generator = Generator.query.get(generator_id)
+    if generator is None:
+        return 'Генератор не найден', 404
+    return jsonify({
+        'generator_id': generator.generator_id,
+        'name': generator.name,
+        'table_name': generator.table_name,
+        'dataset_metadata':transform_metadata(generator.dataset_metadata),
+        'model_config': generator.model_config,
+        'created_at': generator.created_at,
+    }), 200
+
+@bp.route('/generator/delete/<generator_id>', methods=['Delete'])
+def delete_generator(generator_id):
+    generator = Generator.query.get(generator_id)
+    if generator is None:
+        return 'Генератор не найден', 404
+    db.session.delete(generator)
+    db.session.commit()
+    return 'Генератор удален', 200
+
+@bp.route('/generator/update/<generator_id>', methods=['Put'])
+def update_generator(generator_id):
+    generator = Generator.query.get(generator_id)
+    if generator is None:
+        return 'Генератор не найден', 404
+    data = request.get_json()
+    generator.name = data['name']
+    generator.table_name = data['table_name']
+
+    #print(transform_metadata_back(data['dataset_metadata']))
+    dataset_metadata = transform_metadata_back(data['dataset_metadata'])
+    generator.dataset_metadata = dataset_metadata
+    generator.model_config = data['model_config']
+    db.session.commit()
+    return 'Генератор обновлен', 200
 
 @bp.route('/generator/config', methods=['Post'])
 def generator_config():

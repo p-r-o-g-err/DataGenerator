@@ -41,3 +41,17 @@
     cursor: not-allowed;
     background-color: #f1f1f1;
 }
+
+.trashIcon {
+    cursor: pointer;
+    margin: 5px;
+    visibility: hidden;
+}
+
+.trashIcon:hover {
+    color: red;
+}
+
+.generatorRow:hover .trashIcon {
+    visibility: visible;
+}

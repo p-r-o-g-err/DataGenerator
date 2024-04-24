@@ -1,18 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Button } from 'react-bootstrap';
-import { FaPlus } from 'react-icons/fa';
-import { useSelector } from 'react-redux';
+import { FaPlus, FaTrash } from 'react-icons/fa';
+import { useSelector, useDispatch } from 'react-redux';
 import CreateGeneratorModal from './CreateGeneratorModal';
-import { showNotification } from '../store/actions';
+import { showNotification, setGenerators } from '../store/actions';
+import { useNavigate } from 'react-router-dom';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const Generators = () => {
     const [show, setShow] = useState(false);
     const userData = useSelector(state => state.userData);
+    const generators = useSelector(state => state.generators);
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    useEffect(() => {
+        getGenerators();
+    }, []);
+
+    const getGenerators = () => {
+        fetch(`${apiUrl}/generator/all`, {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(data => {
+            dispatch(setGenerators(data));
+            console.log('Генераторы', data);
+        })
+        .catch((error) => {
+            dispatch(showNotification('Ошибка получения генераторов', 'error'));
+        });
+    };
 
     const createGenerator = (name, originalDataset) => {
         console.log('Данные для создания генератора', userData.userId, name, originalDataset);
@@ -25,12 +48,30 @@ const Generators = () => {
             method: 'POST',
             body: data
         })
-        .then(response => response) // .json()
+        .then(response => response.json())
         .then(data => {
-            console.log(data);
+            dispatch(showNotification('Генератор успешно создан', 'success'));
+            getGenerators();
+            // dispatch(setGenerator(data));
+            // const generator = data;
+            // console.log('Ответ от сервера', generator);
         })
         .catch((error) => {
-            console.error('Error:', error);
+            dispatch(showNotification('Ошибка создания генератора', 'error'));
+        });
+    }
+
+    const deleteGenerator = (id) => {
+        console.log('Удаление генератора с ID', id);
+        fetch(`${apiUrl}/generator/delete/${id}`, {
+            method: 'DELETE'
+        })
+        .then(() => {
+            dispatch(showNotification('Генератор успешно удален', 'success'));
+            getGenerators();
+        })
+        .catch((error) => {
+            dispatch(showNotification('Ошибка удаления генератора', 'error'));
         });
     }
 
@@ -52,11 +93,23 @@ const Generators = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Тест</td>
-                        <td>Новый</td>
-                        <td>1 минуту назад</td>
-                    </tr>
+                    {generators && [...generators].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).map(generator => (
+                        <tr 
+                            key={generator.generator_id}
+                            className="generatorRow"
+                            onClick={()=> navigate(`/generators/${generator.generator_id}/data-config`)}
+                        >
+                            <td>{generator.name}</td>
+                            <td>{Object.keys(generator.model_config).length === 0 ? 'Новый' : 'Готовый'}</td>
+                            <td style={{display: 'flex', justifyContent: 'space-between'}}>
+                                {new Date(generator.created_at).toLocaleString()}
+                                <FaTrash 
+                                    className="trashIcon"
+                                    onClick={() => deleteGenerator(generator.generator_id)} 
+                                />
+                            </td> 
+                        </tr>
+                    ))}
                 </tbody>
             </Table>
         </div>
