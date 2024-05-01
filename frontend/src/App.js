@@ -10,13 +10,19 @@ import Notify from './components/Notify';
 
 
 import Home from './components/Home';
+import withAuthCheck from './components/withAuthCheck';
 import Generators from './components/Generators';
 import DataConfig from './components/DataConfig';
-import withAuthCheck from './components/withAuthCheck';
+import ModelConfig from './components/ModelConfig';
+import Generator from './components/Generator';
+import DataGeneration from './components/DataGeneration';
 
 // Защита компонентов от неавторизованных пользователей
 const ProtectedGenerators = withAuthCheck(Generators);
 const ProtectedDataConfig = withAuthCheck(DataConfig);
+const ProtectedModelConfig = withAuthCheck(ModelConfig);
+const ProtectedGenerator = withAuthCheck(Generator);
+const ProtectedDataGeneration = withAuthCheck(DataGeneration);
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -65,6 +71,9 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/generators" element={<ProtectedGenerators />} />
                 <Route path="/generators/:id/data-config" element={<ProtectedDataConfig />} />
+                <Route path="/generators/:id/model-config" element={<ProtectedModelConfig />} />
+                <Route path="/generators/:id" element={<ProtectedGenerator />} />
+                <Route path="/generators/:id/data-generation" element={<ProtectedDataGeneration />} />
             </Routes>
         </BrowserRouter>
     );

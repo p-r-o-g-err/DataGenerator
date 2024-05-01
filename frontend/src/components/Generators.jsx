@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button } from 'react-bootstrap';
+import { Table, Button, Spinner } from 'react-bootstrap';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import CreateGeneratorModal from './CreateGeneratorModal';
@@ -10,6 +10,8 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 const Generators = () => {
     const [show, setShow] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    
     const userData = useSelector(state => state.userData);
     const generators = useSelector(state => state.generators);
 
@@ -38,7 +40,8 @@ const Generators = () => {
     };
 
     const createGenerator = (name, originalDataset) => {
-        console.log('Данные для создания генератора', userData.userId, name, originalDataset);
+        setIsSaving(true);
+        // console.log('Данные для создания генератора', userData.userId, name, originalDataset);
         
         const data = new FormData();
         data.append('originalDataset', originalDataset);
@@ -58,6 +61,9 @@ const Generators = () => {
         })
         .catch((error) => {
             dispatch(showNotification('Ошибка создания генератора', 'error'));
+        })
+        .finally(() => {
+            setIsSaving(false);
         });
     }
 
@@ -75,6 +81,22 @@ const Generators = () => {
         });
     }
 
+    const handleGeneratorClick = (generator) => {
+        if (generator.model_training_status.is_model_trained)
+            navigate(`/generators/${generator.generator_id}`)
+        else
+            navigate(`/generators/${generator.generator_id}/data-config`)
+    }
+
+    if (isSaving) {
+        return (
+            <div className="d-flex justify-content-center align-items-center vh-100">
+                <Spinner animation="border" role="status" />
+                <span style={{marginLeft: '5px'}}>Создание генератора...</span>
+            </div>
+        );
+    }
+
     return (
         <div className="container mt-4 mb-5">
             <CreateGeneratorModal handleClose={handleClose} show={show} createGenerator={createGenerator}/>
@@ -84,34 +106,48 @@ const Generators = () => {
                     <FaPlus /> Создать генератор
                 </Button>
             </div>
-            <Table bordered hover>
-                <thead>
-                    <tr>
-                        <th>Название</th>
-                        <th>Статус</th>
-                        <th>Дата создания</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {generators && [...generators].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).map(generator => (
-                        <tr 
-                            key={generator.generator_id}
-                            className="generatorRow"
-                            onClick={()=> navigate(`/generators/${generator.generator_id}/data-config`)}
-                        >
-                            <td>{generator.name}</td>
-                            <td>{Object.keys(generator.model_config).length === 0 ? 'Новый' : 'Готовый'}</td>
-                            <td style={{display: 'flex', justifyContent: 'space-between'}}>
-                                {new Date(generator.created_at).toLocaleString()}
-                                <FaTrash 
-                                    className="trashIcon"
-                                    onClick={() => deleteGenerator(generator.generator_id)} 
-                                />
-                            </td> 
+            {generators && generators.length > 0 ? (
+                <Table bordered hover>
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Статус</th>
+                            <th>Дата создания</th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {generators && [...generators].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).map(generator => (
+                            <tr 
+                                key={generator.generator_id}
+                                className="generatorRow"
+                                onClick={()=>handleGeneratorClick(generator)}
+                            >
+                                <td>{generator.name}</td>
+                                <td>{generator.model_training_status.is_model_trained ? 'Готовый' : 'Новый'}</td>
+                                <td style={{display: 'flex', justifyContent: 'space-between'}}>
+                                    {new Date(generator.created_at).toLocaleString()}
+                                    <FaTrash 
+                                        className="trashIcon"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            deleteGenerator(generator.generator_id);
+                                        }} 
+                                    />
+                                </td> 
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            ) : (
+                <p style={{ 
+                    color: 'gray', 
+                    fontSize: '20px', 
+                    textAlign: 'center',
+                    marginTop: '50px'
+                }}>
+                    Генераторов не найдено
+                </p>
+            )}
         </div>
     );
 };

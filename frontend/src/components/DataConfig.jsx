@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { showNotification } from '../store/actions';
 import { Table, Button, Form } from 'react-bootstrap';
 import { FaCog, FaSave } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -11,6 +12,7 @@ const DataConfig = () => {
     const { id } = useParams();
     const [generator, setGenerator] = useState(null);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         getGenerator();
@@ -23,7 +25,7 @@ const DataConfig = () => {
         .then(response => response.json())
         .then(data => {
             setGenerator(data);
-            console.log('dataset_metadata', data.dataset_metadata);
+            // console.log('dataset_metadata', data.dataset_metadata);
         })
         .catch((error) => {
             dispatch(showNotification('Ошибка получения генератора', 'error'));
@@ -67,10 +69,10 @@ const DataConfig = () => {
                 <h2 className="homeTitle">Генератор "{generator.name}" - настройка данных</h2>
                 <div>
                     
-                    <Button style={{marginRight: '5px'}} variant="primary" onClick={handleSaveChanges}>
+                    <Button style={{marginRight: '5px'}} variant="success" onClick={handleSaveChanges}>
                         <FaSave /> Сохранить изменения 
                     </Button>
-                    <Button variant="primary" onClick={()=>{}}>
+                    <Button variant="primary" onClick={()=> navigate(`/generators/${generator.generator_id}/model-config`)}>
                         <FaCog /> Настроить модель 
                     </Button>
                 </div>
@@ -93,7 +95,6 @@ const DataConfig = () => {
                                     ))}
                                 </Form.Select>
                             </td>
-                            {/* <td>{dataTypeTranslations[column.sdtype]}</td> */}
                         </tr>
                     ))}
                 </tbody>

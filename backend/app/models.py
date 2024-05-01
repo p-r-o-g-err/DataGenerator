@@ -65,10 +65,10 @@ class Generator(db.Model):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     table_name: Mapped[str] = mapped_column(String(100), nullable=False)
     dataset_location: Mapped[str] = mapped_column(String(1000))
-    #dataset_metadata: Mapped[dict] = mapped_column(JSONB) # 
     dataset_metadata = Column(JSONB)
     model_config = Column(JSONB)
-    #model_config: Mapped[dict] = mapped_column(JSONB)
+    model_location: Mapped[str] = mapped_column(String(1000))
+    model_training_status = Column(JSONB)
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True),
         nullable=False,
@@ -89,6 +89,9 @@ class Generator(db.Model):
         self.dataset_location = dataset_location
         self.dataset_metadata = dataset_metadata
         self.model_config = model_config
+        self.model_location = None
+        self.model_training_status = {}
+        
 
     @staticmethod
     def add_generator(user_id, name, table_name, dataset_location = None, dataset_metadata = {}, model_config = {}):

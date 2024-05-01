@@ -1,8 +1,12 @@
 from flask import Flask
 from flask_cors import CORS
+# from flask_caching import Cache
+
+# cache = Cache(config={'CACHE_TYPE': 'redis'})
 
 def create_app():
     app = Flask(__name__)
+    # cache.init_app(app)
     CORS(app, resources={r"/*": {'origins': '*'}})
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1111@localhost:5432/dataGenerator?client_encoding==utf8'
