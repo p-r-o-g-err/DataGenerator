@@ -24,7 +24,7 @@ function Header() {
                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-between">
                         <Nav className="me-auto justify-content-center flex-grow-1 align-items-center">
                             <Nav.Link onClick={goToGenerators}>Генераторы</Nav.Link>
-                            <Nav.Link onClick={goToHome}>Синтетические данные</Nav.Link>
+                            {/* <Nav.Link onClick={goToHome}>Синтетические данные</Nav.Link> */}
                         </Nav>
                         <Auth/>
                     </Navbar.Collapse>

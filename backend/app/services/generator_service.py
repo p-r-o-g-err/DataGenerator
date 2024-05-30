@@ -111,7 +111,7 @@ def get_metadata_for_sdv(metadata_dict: dict):
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-# Создаем новую сессию для обновления model_location
+# Создаем новую сессию для обновления model_training_status
 Session = sessionmaker(bind=create_engine('postgresql://postgres:1111@localhost:5432/dataGenerator?client_encoding==utf8'))
 session = Session()
 
@@ -211,6 +211,9 @@ def generate_data(generator, num_variants, num_records):
         synthetic_data = synthesizer.sample(num_rows=num_records)
         dataset_location=os.path.join(dataset_folder, f'synthetic_data{i}.csv')
         synthetic_data.to_csv(dataset_location, index=False)
+
+    # Пересохранение модели после генерации данных (чтобы seed всегда был новый, т.к. модель его обновляет после каждого вызова sample())
+    synthesizer.save(filepath=generator.model_location)
 
     # Формирование отчета о данных
     synthetic_data = synthesizer.sample(num_rows=num_records)
