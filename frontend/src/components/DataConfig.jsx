@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { showNotification } from '../store/actions';
 import { Table, Button, Form } from 'react-bootstrap';
-import { FaCog, FaSave } from 'react-icons/fa';
+import { FaCog, FaSave, FaPlay } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -54,11 +54,34 @@ const DataConfig = () => {
             },
             body: JSON.stringify(generator)
         })
-        .then(() => {
+        .then((response) => {
+            if (!response.ok) 
+                throw response;
             dispatch(showNotification('Изменения сохранены', 'success'));
         })
         .catch((error) => {
-            dispatch(showNotification('Ошибка сохранения изменений', 'error'));
+            if (error.status === 413)
+                dispatch(showNotification('Ошибка при сохранении набора данных. Проверьте правильность типов данных столбцов', 'error'));
+            else
+                dispatch(showNotification('Ошибка сохранения изменений', 'error'));
+        });
+    }
+
+    const startTraining = () => {
+        fetch(`${apiUrl}/generator/train/${id}`, {
+            method: 'POST'
+        })
+        .then((response) => {
+            if (!response.ok) 
+                throw response;
+            dispatch(showNotification('Обучение запущено', 'success'));
+            navigate(`/generators/${generator.generator_id}`);
+        })
+        .catch((error) => {
+            if (error.status === 413)
+                dispatch(showNotification('Ошибка запуска обучения. Типы данных столбцов не соответствуют данным в столбцах', 'error'));
+            else 
+                dispatch(showNotification('Ошибка запуска обучения', 'error'));
         });
     }
 
@@ -72,8 +95,11 @@ const DataConfig = () => {
                     <Button style={{marginRight: '5px'}} variant="success" onClick={handleSaveChanges}>
                         <FaSave /> Сохранить изменения 
                     </Button>
-                    <Button variant="primary" onClick={()=> navigate(`/generators/${generator.generator_id}/model-config`)}>
+                    {/* <Button variant="primary" onClick={()=> navigate(`/generators/${generator.generator_id}/model-config`)}>
                         <FaCog /> Настроить модель 
+                    </Button> */}
+                    <Button variant="primary" onClick={startTraining}>
+                        <FaPlay /> Начать обучение
                     </Button>
                 </div>
             </div>

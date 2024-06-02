@@ -50,8 +50,8 @@ function CreateGeneratorModal({handleClose, show, createGenerator}) {
             dispatch(showNotification('Название генератора не должно превышать 100 символов', 'error'));
             return;
         }
-        if (!/^[a-zA-Zа-яА-Я0-9 -]+$/.test(name)) {
-            dispatch(showNotification('Название генератора должно содержать только буквы, цифры, пробелы, тире, и не начинаться с пробела', 'error'));
+        if (!/^[a-zA-Zа-яА-Я0-9 -_]+$/.test(name)) {
+            dispatch(showNotification('Название генератора должно содержать только буквы, цифры, пробелы, тире, нижнее подчеркивание и не начинаться с пробела', 'error'));
             return;
         }
         createGenerator(name.trim(), originalDataset);

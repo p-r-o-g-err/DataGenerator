@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { showNotification } from '../store/actions';
-import { Button, Table, Form, Row, Col } from 'react-bootstrap';
+import { Button, Table, Form, Row, Col, Spinner } from 'react-bootstrap';
 import { FaRegFileAlt } from 'react-icons/fa';
 
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -12,6 +12,8 @@ const DataGeneration = () => {
     const [generator, setGenerator] = useState(null);
     const [numVariants, setNumVariants] = useState(1);
     const [numRecords, setNumRecords] = useState(1000);
+    const [addReport, setAddReport] = useState(true);
+    const [isGenerating, setIsGenerating] = useState(false);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -38,8 +40,8 @@ const DataGeneration = () => {
         const value = e.target.value;
         if (value < 1) {
             handleNumVariantsChange(1);
-        } else if (value > 1000) {
-            handleNumVariantsChange(1000);
+        } else if (value > 100) {
+            handleNumVariantsChange(100);
         } else if (!Number.isInteger(Number(value))) {
             handleNumVariantsChange(Math.floor(value));
         }
@@ -65,6 +67,7 @@ const DataGeneration = () => {
     }
 
     const startGenerationData = () => {
+        setIsGenerating(true);
         fetch(`${apiUrl}/generator/generate/${id}`, {
             method: 'POST',
             headers: {
@@ -72,50 +75,38 @@ const DataGeneration = () => {
             },
             body: JSON.stringify({
                 num_variants: numVariants,
-                num_records: numRecords
+                num_records: numRecords,
+                add_report: addReport
             })
         })
         .then(response => response.blob())
         .then(blob => {
-            // Создаем URL для blob
-            const url = window.URL.createObjectURL(blob);
-            // Создаем элемент 'a'
-            const a = document.createElement('a');
+            const url = window.URL.createObjectURL(blob); // Создаем URL для blob
+            const a = document.createElement('a'); // Создаем элемент 'a'
             a.style.display = 'none';
             a.href = url;
-            // Имя файла для скачивания
-            a.download = `${generator.name}_synthetic_data.zip`;
-            // Добавляем 'a' на страницу
-            document.body.appendChild(a);
+            a.download = `${generator.name}_synthetic_data.zip`; // Имя файла для скачивания
+            document.body.appendChild(a); // Добавляем 'a' на страницу
             a.click();
-            // Удаляем 'a' после скачивания
-            document.body.removeChild(a);
+            document.body.removeChild(a); // Удаляем 'a' после скачивания
             dispatch(showNotification('Данные успешно сгенерированы', 'success'));
             // dispatch(showNotification('Запущена генерация данных', 'success'));
         })
         .catch((error) => {
             dispatch(showNotification('Ошибка генерации данных', 'error'));
-            // dispatch(showNotification('Ошибка начала генерации данных', 'error'));
+        })
+        .finally(() => {
+            setIsGenerating(false);
         });
     };
 
-    const downloadGenerationData = () => {
-        // fetch(`${apiUrl}/generator/download_data/${id}`, {
-        //     method: 'GET'
-        // })
-        // .then(response => response.blob())
-        // .then(blob => {
-        //     const url = window.URL.createObjectURL(new Blob([blob]));
-        //     const link = document.createElement('a');
-        //     link.href = url;
-        //     link.setAttribute('download', `generated_data_${id}.csv`);
-        //     document.body.appendChild(link);
-        //     link.click();
-        //     link.parentNode.removeChild(link);
-        // })
-        // .catch((error) => {
-        //     dispatch(showNotification('Ошибка загрузки данных', 'error'));
-        // });
+    if (isGenerating) {
+        return (
+            <div className="d-flex justify-content-center align-items-center vh-100">
+                <Spinner animation="border" role="status" />
+                <span style={{marginLeft: '5px'}}>Генерация данных...</span>
+            </div>
+        );
     }
 
     return (
@@ -135,7 +126,7 @@ const DataGeneration = () => {
                         <Form.Label>Количество сгенерированных вариантов</Form.Label>
                         <Form.Control 
                             type="number" 
-                            min="1" max="1000"
+                            min="1" max="100"
                             value={numVariants} 
                             onChange={(e) => handleNumVariantsChange(e.target.value)} 
                             onBlur={(e) => onBlurNumVariants(e)}
@@ -152,6 +143,19 @@ const DataGeneration = () => {
                             onChange={(e) => handleNumRecordsChange(e.target.value)} 
                             onBlur={(e) => onBlurNumRecords(e)}
                         />
+                    </Form.Group>
+                </Col>
+                <Col md={3}>
+                    <Form.Group controlId="addReport">
+                        <Form.Check 
+                            type="switch"
+                            label="Сформировать отчет"
+                            checked={addReport}
+                            onChange={(e) => setAddReport(e.target.checked)}
+                        />
+                        <Form.Text className="text-muted">
+                            Потребуется больше времени
+                        </Form.Text>
                     </Form.Group>
                 </Col>
             </Row> 

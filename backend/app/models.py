@@ -65,6 +65,7 @@ class Generator(db.Model):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     table_name: Mapped[str] = mapped_column(String(100), nullable=False)
     dataset_location: Mapped[str] = mapped_column(String(1000))
+    dataset_encoding: Mapped[str] = mapped_column(String(100))
     dataset_metadata = Column(JSONB)
     model_config = Column(JSONB)
     model_location: Mapped[str] = mapped_column(String(1000))
@@ -87,6 +88,7 @@ class Generator(db.Model):
         self.name = name
         self.table_name = table_name
         self.dataset_location = dataset_location
+        self.dataset_encoding = None
         self.dataset_metadata = dataset_metadata
         self.model_config = model_config
         self.model_location = None

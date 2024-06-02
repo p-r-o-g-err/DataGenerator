@@ -64,12 +64,17 @@ const ModelConfig = () => {
         fetch(`${apiUrl}/generator/train/${id}`, {
             method: 'POST'
         })
-        .then(() => {
+        .then((response) => {
+            if (!response.ok) 
+                throw response;
             dispatch(showNotification('Обучение запущено', 'success'));
             navigate(`/generators/${generator.generator_id}`);
         })
         .catch((error) => {
-            dispatch(showNotification('Ошибка запуска обучения', 'error'));
+            if (error.status === 413)
+                dispatch(showNotification('Ошибка запуска обучения. Типы данных столбцов не соответствуют данным в столбцах', 'error'));
+            else 
+                dispatch(showNotification('Ошибка запуска обучения', 'error'));
         });
     }
 
@@ -101,30 +106,6 @@ const ModelConfig = () => {
                         </Form.Select>
                     </Form.Group>
                 </Col>
-                {/* <Col md>
-                    <Form.Group controlId="numVariants">
-                        <Form.Label>Количество сгенерированных вариантов</Form.Label>
-                        <Form.Control 
-                            type="number" 
-                            min="1" max="1000"
-                            value={generator.model_config['num_variants']} 
-                            onChange={(e) => handleModelConfigChange('num_variants', e.target.value)} 
-                            onBlur={(e) => onBlurNumVariants(e)}
-                        />
-                    </Form.Group>
-                </Col>
-                <Col md>
-                    <Form.Group controlId="numRecords">
-                        <Form.Label>Количество записей в вариантах</Form.Label>
-                        <Form.Control 
-                            type="number" 
-                            min="1" max="10000"
-                            value={generator.model_config['num_records']} 
-                            onChange={(e) => handleModelConfigChange('num_records', e.target.value)} 
-                            onBlur={(e) => onBlurNumRecords(e)}
-                        />
-                    </Form.Group>
-                </Col> */}
             </Row> 
         </div>
     );

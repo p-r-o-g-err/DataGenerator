@@ -51,7 +51,11 @@ const Generators = () => {
             method: 'POST',
             body: data
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) 
+                throw response;
+            return response.json();
+        })
         .then(data => {
             dispatch(showNotification('Генератор успешно создан', 'success'));
             getGenerators();
@@ -60,7 +64,10 @@ const Generators = () => {
             // console.log('Ответ от сервера', generator);
         })
         .catch((error) => {
-            dispatch(showNotification('Ошибка создания генератора', 'error'));
+            if (error.status === 413)
+                dispatch(showNotification('Ошибка создания генератора. Файл должен содержать не менее 50 строк и 2 столбцов', 'error'));
+            else
+                dispatch(showNotification('Ошибка создания генератора', 'error'));
         })
         .finally(() => {
             setIsSaving(false);
