@@ -12,6 +12,7 @@ const Generator = () => {
     const { id } = useParams();
     const [generator, setGenerator] = useState(null);
     const [sampleData, setSampleData] = useState(null);
+    const [columns, setColumns] = useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const intervalId = useRef(null);
@@ -90,7 +91,8 @@ const Generator = () => {
             return response.json();
         })
         .then(data => {
-            setSampleData(data);
+            setSampleData(data[0]);
+            setColumns(data[1]);
             console.log('sample_data', data);
         })
         .catch((error) => {
@@ -138,23 +140,22 @@ const Generator = () => {
                     <Table striped bordered hover size="sm">
                         <thead>
                             <tr>
-                                {sampleData.length > 0 && Object.keys(sampleData[0]).map(header => (
-                                    <th key={header}>{header}</th>
+                                {sampleData.length > 0 && columns.map(column => (
+                                    <th key={column.column_number}>{column.name}</th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
                             {sampleData.map((row, index) => (
                                 <tr key={index}>
-                                    {Object.values(row).map((value, index) => (
-                                        <td key={index}>{value}</td>
+                                    {columns.map(column => (
+                                    <td key={column.column_number}>{row[column.name]}</td>
                                     ))}
                                 </tr>
                             ))}
                         </tbody>
                     </Table>
                     </div>
-                    
                 </div>
             ) : null}
             <div className="mt-4 p-3 border">

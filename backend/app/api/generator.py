@@ -99,7 +99,7 @@ def get_generator(generator_id):
         'generator_id': generator.generator_id,
         'name': generator.name,
         'table_name': generator.table_name,
-        'dataset_metadata':transform_metadata(generator.dataset_metadata),
+        'dataset_metadata': transform_metadata(generator_service.sort_metadata(generator)), # transform_metadata(generator.dataset_metadata),
         'model_config': generator.model_config,
         'model_training_status': generator.model_training_status,
         'created_at': generator.created_at,
@@ -201,8 +201,10 @@ def get_sample_data(generator_id):
     with open(sample_location, 'r') as file:
         reader = csv.DictReader(file)
         sample_data = list(reader)
-
-    return jsonify(sample_data)
+    
+    sorted_metadata = transform_metadata(generator_service.sort_metadata(generator))
+    
+    return jsonify(sample_data, sorted_metadata)
     # return send_file(sample_location, as_attachment=True)    
 
 @bp.route('/generator/generate/<generator_id>', methods=['Post'])

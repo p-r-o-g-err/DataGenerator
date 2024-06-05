@@ -25,6 +25,15 @@ def read_csv(generator):
     print('Чтение файла:', generator.dataset_location, 'с кодировкой:', generator.dataset_encoding)
     return pd.read_csv(generator.dataset_location, encoding=generator.dataset_encoding)
 
+# Отсортировать столбцы в метаданных в правильном порядке (т.е. как в исходном датасете)
+def sort_metadata(generator):
+    data = read_csv(generator)
+
+    temp_metadata = {'columns': {}}
+    for col_name in data.columns:
+        temp_metadata['columns'][col_name] = generator.dataset_metadata['columns'][col_name]
+    return temp_metadata
+
 # Распознать структуру данных (типы столбцов) для сохранения в БД
 def get_metadata(generator):
     # Заменяет типы данных, которые не входят в перечень ('numerical','categorical','datetime','boolean')
@@ -172,7 +181,8 @@ def train_model(generator_id):
     generator = session.query(Generator).get(generator_id)
 
     ########### 1. Извлекаем метаданные
-    metadata = get_metadata_for_sdv(generator.dataset_metadata)
+    sorted_metadata = sort_metadata(generator)
+    metadata = get_metadata_for_sdv(sorted_metadata) # (generator.dataset_metadata)
 
     generator.model_training_status = {
         'is_fetched_data': True,
@@ -303,7 +313,8 @@ def generate_data(generator, num_variants, num_records, add_report=False):
             os.remove(report_path) 
 
 def get_data_report(generator, synthetic_data, real_data, folder_path, quality_report = None):
-    metadata = get_metadata_for_sdv(generator.dataset_metadata)
+    sorted_metadata = sort_metadata(generator)
+    metadata = get_metadata_for_sdv(sorted_metadata) # (generator.dataset_metadata)
 
     # Создать пустой список для хранения HTML-строк каждого графика
     html_strings = []
