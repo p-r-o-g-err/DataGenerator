@@ -108,7 +108,7 @@ const Generators = () => {
         <div className="container mt-4 mb-5">
             <CreateGeneratorModal handleClose={handleClose} show={show} createGenerator={createGenerator}/>
             <div className="d-flex justify-content-between align-items-center mb-2">
-                <h2 className="homeTitle">Генераторы</h2>
+                <h2 className="myTitle">Генераторы</h2>
                 <Button variant="primary" onClick={handleShow}>
                     <FaPlus /> Создать генератор
                 </Button>

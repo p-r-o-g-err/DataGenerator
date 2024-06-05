@@ -1,5 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import {Button, Card, CardGroup} from 'react-bootstrap';
+import dataDownload from '../images/icons8-data-download-96.png';
+import codingTransfer from '../images/icons8-coding-transfer-96.png';
+import searchSettings from '../images/icons8-search-settings-96.png';
+import dataGrowth from '../images/icons8-data-growth-96.png';
+import '../styles/Home.css';  // Подключаем файл стилей
 
 function Home() {
     const navigate = useNavigate();
@@ -7,11 +12,13 @@ function Home() {
     return (
         <main className="container mt-5 mb-5">
             <h1 className="text-center homeTitle">Добро пожаловать в сервис генерации синтетических данных</h1>
-            <p className="text-center homeSubtitle">С помощью нашего сервиса вы можете генерировать структурированные синтетические данные, которые помогут вам в ваших исследованиях и разработках</p>
+            <p className="text-center homeSubtitle">С помощью данного сервиса вы можете генерировать структурированные синтетические данные, которые помогут вам в ваших исследованиях и разработках</p>
             <h2 className="text-center mb-4 homeAlgorithmTitle">Алгоритм работы по шагам</h2>
             <CardGroup>
-                <Card>
-                    {/* <Card.Img variant="top" src="holder.js/100px160" /> */}
+                <Card className="custom-card">
+                    <div className="d-flex justify-content-center mt-3">
+                        <img src={dataDownload} className="icon-img" />
+                    </div>
                     <Card.Body>
                         <Card.Title>1. Загрузить данные</Card.Title>
                         <Card.Text>
@@ -19,7 +26,10 @@ function Home() {
                         </Card.Text>
                     </Card.Body>
                 </Card>
-                <Card>
+                <Card className="custom-card">
+                    <div className="d-flex justify-content-center mt-3">
+                        <img src={codingTransfer} className="icon-img" />
+                    </div>
                     <Card.Body>
                         <Card.Title>2. Настроить структуру данных</Card.Title>
                         <Card.Text>
@@ -27,7 +37,10 @@ function Home() {
                         </Card.Text>
                     </Card.Body>
                 </Card>
-                <Card>
+                <Card className="custom-card">
+                    <div className="d-flex justify-content-center mt-3">
+                        <img src={searchSettings} className="icon-img" />
+                    </div>
                     <Card.Body>
                         <Card.Title>3. Настроить генерацию</Card.Title>
                         <Card.Text>
@@ -35,7 +48,10 @@ function Home() {
                         </Card.Text>
                     </Card.Body>
                 </Card>
-                <Card>
+                <Card className="custom-card">
+                    <div className="d-flex justify-content-center mt-3">
+                        <img src={dataGrowth} className="icon-img" />
+                    </div>
                     <Card.Body>
                         <Card.Title>4. Сгенерировать данные</Card.Title>
                         <Card.Text>
@@ -45,7 +61,7 @@ function Home() {
                 </Card>
             </CardGroup>
             <div className="d-flex justify-content-center">
-                <Button variant="primary" className="mt-3" onClick={()=> navigate('/generators')}>Начать работу</Button>
+                <Button variant="primary" className="mt-3" onClick={() => navigate('/generators')}>Начать работу</Button>
             </div>
         </main>
     );

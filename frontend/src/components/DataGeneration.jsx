@@ -113,7 +113,7 @@ const DataGeneration = () => {
         generator && Object.keys(generator.model_config).length > 0 &&
         <div className="container mt-4 mb-5">
             <div className="d-flex justify-content-between align-items-center mb-2">
-                <h2 className="homeTitle">Генератор "{generator.name}" - Настройка синтетических данных</h2>
+                <h2 className="myTitle">Генератор "{generator.name}" - Настройка генерации</h2>
                 <div>
                     <Button variant="primary" onClick={startGenerationData}>
                         <FaRegFileAlt /> Сгенерировать данные

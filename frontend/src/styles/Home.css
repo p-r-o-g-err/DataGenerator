@@ -1,0 +1,77 @@
+.homeTitle {
+    font-family: 'Roboto', sans-serif;
+    font-size: 2.5em;
+    color: #333;
+    line-height: 1.2;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.homeSubtitle {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.2em;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 30px;
+}
+
+.homeAlgorithmTitle {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.8em;
+    color: #333;
+    line-height: 1.2;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.custom-card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    background: linear-gradient(to bottom, #ffffff, #f9f9f9);
+}
+
+.custom-card:hover {
+    transform: translateY(-5px);
+}
+
+.icon-img {
+    width: 96px;
+    height: 96px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.custom-card-title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5em;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+}
+
+.custom-card-text {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    color: #666;
+    text-align: center;
+}
+
+.mt-3 {
+    margin-top: 1rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mt-5 {
+    margin-top: 3rem !important;
+}
+
+.mb-5 {
+    margin-bottom: 3rem !important;
+}

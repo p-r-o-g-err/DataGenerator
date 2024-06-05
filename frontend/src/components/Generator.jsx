@@ -104,7 +104,7 @@ const Generator = () => {
         generator && Object.keys(generator.model_config).length > 0 &&
         <div className="container mt-4 mb-5">
             <div className="d-flex justify-content-between align-items-center mb-2">
-                <h2 className="homeTitle">Генератор "{generator.name}"</h2>
+                <h2 className="myTitle">Генератор "{generator.name}"</h2>
                 <div>
                     <Button variant="info" style={{marginRight: '5px'}}  disabled={!generator.model_training_status.is_report_generated} onClick={downloadReport}>
                         <FaFileDownload /> Скачать отчет
