@@ -95,12 +95,12 @@ const DataConfig = () => {
                     <Button style={{marginRight: '5px'}} variant="success" onClick={handleSaveChanges}>
                         <FaSave /> Сохранить изменения 
                     </Button>
-                    {/* <Button variant="primary" onClick={()=> navigate(`/generators/${generator.generator_id}/model-config`)}>
+                    <Button variant="primary" onClick={()=> navigate(`/generators/${generator.generator_id}/model-config`)}>
                         <FaCog /> Настроить модель 
-                    </Button> */}
-                    <Button variant="primary" onClick={startTraining}>
-                        <FaPlay /> Начать обучение
                     </Button>
+                    {/* <Button variant="primary" onClick={startTraining}>
+                        <FaPlay /> Начать обучение
+                    </Button> */}
                 </div>
             </div>
             <Table bordered hover>

@@ -1,5 +1,5 @@
 from sdv.metadata import SingleTableMetadata
-from sdv.single_table import GaussianCopulaSynthesizer, CTGANSynthesizer, TVAESynthesizer
+from sdv.single_table import GaussianCopulaSynthesizer, CTGANSynthesizer, TVAESynthesizer, CopulaGANSynthesizer
 from sdv.lite import SingleTablePreset
 import pandas as pd
 import chardet
@@ -82,14 +82,16 @@ def get_metadata(generator):
     data = read_csv(generator)
     metadata = SingleTableMetadata()
     metadata.detect_from_dataframe(data)
+    # print('metadata', metadata)
     # Предобработка метаданных
     metadata = replace_types(metadata, data)
     metadata = split_numerical(metadata, data)
     metadata = remove_pii(metadata)
+    # print('metadata2', metadata)
     metadata_dict = metadata.to_dict()
     metadata_dict = remove_primary_key(metadata_dict)
     metadata_dict = remove_metadata_spec_version(metadata_dict)
-    
+    # print('metadata_dict', metadata_dict)
     return metadata_dict
 
 # Преобразовать структуру данных из БД в структуру данных для работы с моделями SDV
@@ -204,6 +206,8 @@ def train_model(generator_id):
         synthesizer = CTGANSynthesizer(metadata)
     elif (generator.model_config['model'] == 'TVAE'):
         synthesizer = TVAESynthesizer(metadata)
+    elif (generator.model_config['model'] == 'CopulaGAN'):
+        synthesizer = CopulaGANSynthesizer(metadata)
 
     data = read_csv(generator)
     synthesizer.fit(data)
@@ -273,6 +277,8 @@ def generate_data(generator, num_variants, num_records, add_report=False):
         synthesizer = CTGANSynthesizer.load(generator.model_location)
     elif (generator.model_config['model'] == 'TVAE'):
         synthesizer = TVAESynthesizer.load(generator.model_location)
+    elif (generator.model_config['model'] == 'CopulaGAN'):
+        synthesizer = CopulaGANSynthesizer(metadata)
 
     dataset_folder = os.path.join('generators', str(generator.generator_id), 'synthetic_data')
     # Создаем папку, если она еще не существует
@@ -359,26 +365,30 @@ def get_data_report(generator, synthetic_data, real_data, folder_path, quality_r
 
     # Создать графики распределения для каждого столбца
     for variable in synthetic_data.columns:
-        fig = get_column_plot(
-            real_data=real_data,
-            synthetic_data=synthetic_data,
-            metadata=metadata,
-            column_name=variable
-        )
-        # Обновить макет, чтобы показать оба графика наложенными
-        fig.update_layout(
-            barmode='overlay', 
-            title={
-                'text': variable,
-                'x': 0.4,
-                'xanchor': 'center',
-                'yanchor': 'top'
-            }
-        )
-        # Сохранить график в HTML-строку и добавить его в список
-        html_string = pio.to_html(fig, full_html=False)
-        html_strings.append(html_string)
-    
+        try:
+            fig = get_column_plot(
+                real_data=real_data,
+                synthetic_data=synthetic_data,
+                metadata=metadata,
+                column_name=variable
+            )
+            # Обновить макет, чтобы показать оба графика наложенными
+            fig.update_layout(
+                barmode='overlay', 
+                title={
+                    'text': variable,
+                    'x': 0.4,
+                    'xanchor': 'center',
+                    'yanchor': 'top'
+                }
+            )
+            # Сохранить график в HTML-строку и добавить его в список
+            html_string = pio.to_html(fig, full_html=False)
+            html_strings.append(html_string)
+        except Exception as e:
+            print(f"Ошибка при построении графика для столбца {variable}: {e}")
+            # html_strings.append(f'<p style="color:red;text-align:center;">Ошибка при построении графика для столбца {variable}: {e}</p>')
+
     # Объединить все HTML-строки в одну и сохранить в файл
     data_report_location = os.path.join(folder_path, 'model-report.html')
     with open(data_report_location, 'w', encoding='utf-8') as f:

@@ -103,6 +103,7 @@ const ModelConfig = () => {
                             <option>GaussianCopula</option>
                             <option>CTGAN</option>
                             <option>TVAE</option>
+                            <option>CopulaGAN</option>
                         </Form.Select>
                     </Form.Group>
                 </Col>

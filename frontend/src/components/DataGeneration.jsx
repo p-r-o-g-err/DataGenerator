@@ -40,8 +40,8 @@ const DataGeneration = () => {
         const value = e.target.value;
         if (value < 1) {
             handleNumVariantsChange(1);
-        } else if (value > 100) {
-            handleNumVariantsChange(100);
+        } else if (value > 1000) {
+            handleNumVariantsChange(1000);
         } else if (!Number.isInteger(Number(value))) {
             handleNumVariantsChange(Math.floor(value));
         }
@@ -126,7 +126,7 @@ const DataGeneration = () => {
                         <Form.Label>Количество сгенерированных вариантов</Form.Label>
                         <Form.Control 
                             type="number" 
-                            min="1" max="100"
+                            min="1" max="1000"
                             value={numVariants} 
                             onChange={(e) => handleNumVariantsChange(e.target.value)} 
                             onBlur={(e) => onBlurNumVariants(e)}

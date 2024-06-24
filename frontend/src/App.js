@@ -71,7 +71,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/generators" element={<ProtectedGenerators />} />
                 <Route path="/generators/:id/data-config" element={<ProtectedDataConfig />} />
-                {/* <Route path="/generators/:id/model-config" element={<ProtectedModelConfig />} /> */}
+                <Route path="/generators/:id/model-config" element={<ProtectedModelConfig />} />
                 <Route path="/generators/:id" element={<ProtectedGenerator />} />
                 <Route path="/generators/:id/data-generation" element={<ProtectedDataGeneration />} />
             </Routes>
