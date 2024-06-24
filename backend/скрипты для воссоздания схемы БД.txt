@@ -1,0 +1,25 @@
+CREATE TABLE public."User" (
+	user_id uuid NOT NULL,
+	first_name varchar NOT NULL,
+	last_name varchar NOT NULL,
+	yandex_id varchar NOT NULL,
+	CONSTRAINT user_pk PRIMARY KEY (user_id),
+	CONSTRAINT user_unique UNIQUE (yandex_id)
+);
+
+CREATE TABLE public.Generator (
+	generator_id uuid NOT NULL,
+	user_id uuid NOT NULL,
+	"name" varchar NOT NULL,
+	table_name varchar NOT NULL,
+	dataset_location varchar NULL,
+	dataset_encoding varchar NULL,
+	dataset_metadata jsonb NULL,
+	model_config jsonb NULL,
+	model_location varchar NULL,
+model_training_status jsonb NULL,
+	created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	CONSTRAINT generator_pk PRIMARY KEY (generator_id),
+	CONSTRAINT generator_user_fk FOREIGN KEY (user_id) REFERENCES public."User"(user_id)
+);
